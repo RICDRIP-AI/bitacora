@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bitácora — Ricardo</title>
+<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+<script>
+  window.OneSignalDeferred = window.OneSignalDeferred || [];
+  OneSignalDeferred.push(async function(OneSignal) {
+    await OneSignal.init({ appId: "80f42d8e-8fe1-4037-9686-a0a3f9fd74f3" });
+  });
+</script>
+<style>
+  :root{
+    --bg:#F0F1EC;
+    --surface:#FFFFFF;
+    --surface-2:#F7F7F3;
+    --ink:#20241F;
+    --ink-soft:#63685F;
+    --ink-faint:#9A9E93;
+    --border:#DDDED4;
+    --border-strong:#C7C9BC;
+    --consultorio:#2F6690;
+    --consultorio-bg:#E7EFF4;
+    --negocio:#A9660F;
+    --negocio-bg:#F7EDDD;
+    --desarrollo:#6B4C9A;
+    --desarrollo-bg:#EEE8F5;
+    --casa:#B24A34;
+    --casa-bg:#F7E7E2;
+    --crecimiento:#3E7A4E;
+    --crecimiento-bg:#E6F0E7;
+    --relaciones:#2C7A73;
+    --relaciones-bg:#E3F0EE;
+    --radius:10px;
+    --font-display:Georgia,'Iowan Old Style',ui-serif,serif;
+    --font-body:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+    --font-mono:'SF Mono','JetBrains Mono',ui-monospace,Consolas,monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --bg:#191B17; --surface:#212420; --surface-2:#262924;
+      --ink:#EDEEE8; --ink-soft:#A8AC9F; --ink-faint:#6E7266;
+      --border:#33362F; --border-strong:#41453B;
+      --consultorio-bg:#1C2A33; --negocio-bg:#2E2413; --desarrollo-bg:#251E33;
+      --casa-bg:#2E1D18; --crecimiento-bg:#182A1D; --relaciones-bg:#16292A;
+    }
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:var(--font-body); line-height:1.5; padding-bottom:48px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:640px; margin:0 auto; padding:20px 16px 8px;}
+
+  header.panel{
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+    padding:18px 18px 16px; margin-bottom:16px;
+  }
+  .eyebrow{font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-faint); margin:0 0 4px;}
+  h1{font-family:var(--font-display); font-weight:400; font-size:24px; margin:0 0 14px; color:var(--ink);}
+  .gauge-row{display:flex; align-items:baseline; gap:10px; margin-bottom:8px;}
+  .gauge-num{font-family:var(--font-mono); font-size:32px; font-weight:600; color:var(--ink);}
+  .gauge-label{font-size:13px; color:var(--ink-soft);}
+  .gauge-track{height:6px; background:var(--surface-2); border:1px solid var(--border); border-radius:4px; overflow:hidden;}
+  .gauge-fill{height:100%; background:var(--consultorio); transition:width .4s ease;}
+
+  .tabs{display:flex; gap:6px; margin-bottom:14px; background:var(--surface-2); border:1px solid var(--border); border-radius:999px; padding:3px;}
+  .tab{flex:1; text-align:center; padding:8px 10px; font-size:14px; border-radius:999px; cursor:pointer; color:var(--ink-soft); user-select:none;}
+  .tab.active{background:var(--surface); color:var(--ink); font-weight:600; box-shadow:0 1px 2px rgba(0,0,0,.06);}
+
+  .chips{display:flex; gap:6px; overflow-x:auto; padding-bottom:4px; margin-bottom:14px;}
+  .chip{flex:0 0 auto; padding:6px 12px; border-radius:999px; border:1px solid var(--border); font-size:12.5px; color:var(--ink-soft); cursor:pointer; white-space:nowrap; background:var(--surface);}
+  .chip.active{border-color:var(--ink); color:var(--ink); font-weight:600;}
+
+  .view{display:none;}
+  .view.active{display:block;}
+
+  .card{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:14px 16px; margin-bottom:10px;}
+  .card.dormant{opacity:.7;}
+  .card-top{display:flex; justify-content:space-between; align-items:flex-start; gap:10px;}
+  .badge{display:inline-block; font-size:11px; padding:2px 9px; border-radius:999px; font-weight:600; white-space:nowrap;}
+  .b-consultorio{background:var(--consultorio-bg); color:var(--consultorio);}
+  .b-negocio{background:var(--negocio-bg); color:var(--negocio);}
+  .b-desarrollo{background:var(--desarrollo-bg); color:var(--desarrollo);}
+  .b-casa{background:var(--casa-bg); color:var(--casa);}
+  .b-crecimiento{background:var(--crecimiento-bg); color:var(--crecimiento);}
+  .b-relaciones{background:var(--relaciones-bg); color:var(--relaciones);}
+
+  .card h3{font-family:var(--font-display); font-weight:400; font-size:17px; margin:8px 0 8px;}
+  .progress-row{display:flex; align-items:center; gap:8px; margin-bottom:6px;}
+  .progress-track{flex:1; height:5px; background:var(--surface-2); border:1px solid var(--border); border-radius:3px; overflow:hidden;}
+  .progress-fill{height:100%; border-radius:3px;}
+  .progress-text{font-family:var(--font-mono); font-size:11.5px; color:var(--ink-soft); min-width:34px; text-align:right;}
+
+  details{margin-top:4px;}
+  summary{font-size:13px; color:var(--ink-soft); cursor:pointer; list-style:none; padding:4px 0;}
+  summary::-webkit-details-marker{display:none;}
+  summary:before{content:"▸ "; }
+  details[open] summary:before{content:"▾ ";}
+  .phase{display:flex; align-items:flex-start; gap:9px; padding:7px 0; border-top:1px solid var(--border); font-size:13.5px;}
+  .phase:first-child{border-top:none;}
+  .phase input{margin-top:3px; flex:0 0 auto;}
+  .phase label.done{color:var(--ink-faint); text-decoration:line-through;}
+
+  .note{font-size:13px; color:var(--ink-soft); margin-top:6px;}
+  .lock{font-size:12px; color:var(--casa); background:var(--casa-bg); display:inline-block; padding:3px 9px; border-radius:6px; margin-top:8px;}
+  .task-row{display:flex; align-items:center; gap:9px; margin-top:10px;}
+  .task-row input{flex:0 0 auto;}
+
+  .habit-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+  .habit-card{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:13px; display:flex; flex-direction:column; gap:8px;}
+  .habit-title{font-size:13.5px; font-weight:600; line-height:1.3;}
+  .streak-row{display:flex; align-items:baseline; gap:5px;}
+  .streak-num{font-family:var(--font-mono); font-size:20px; font-weight:600;}
+  .streak-label{font-size:11px; color:var(--ink-faint);}
+  .habit-btn{margin-top:auto; border:1px solid var(--border-strong); background:var(--surface-2); border-radius:8px; padding:7px; font-size:12.5px; text-align:center; cursor:pointer; color:var(--ink);}
+  .habit-btn.done{background:var(--crecimiento); border-color:var(--crecimiento); color:#fff;}
+
+  .loading{text-align:center; color:var(--ink-faint); padding:40px 0; font-size:13px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="panel">
+    <p class="eyebrow" id="today-label">Bitácora</p>
+    <h1>Hola, Ricardo</h1>
+    <div class="gauge-row">
+      <span class="gauge-num" id="gauge-num">0%</span>
+      <span class="gauge-label">avance general en tus 3 proyectos activos</span>
+    </div>
+    <div class="gauge-track"><div class="gauge-fill" id="gauge-fill" style="width:0%"></div></div>
+    <div id="notif-btn" class="habit-btn" style="margin-top:12px; display:inline-block;" onclick="activarNotificaciones()">Activar recordatorios</div>
+  </header>
+
+  <div class="tabs">
+    <div class="tab active" data-view="proyectos">Proyectos</div>
+    <div class="tab" data-view="habitos">Hábitos</div>
+  </div>
+
+  <div id="view-proyectos" class="view active">
+    <div class="chips" id="chips"></div>
+    <div id="projects-list"><p class="loading">Cargando…</p></div>
+  </div>
+
+  <div id="view-habitos" class="view">
+    <div class="habit-grid" id="habits-grid"><p class="loading">Cargando…</p></div>
+  </div>
+</div>
+
+<script>
+const PROJECTS = [
+  { id:'titular', area:'consultorio', title:'Ascender a odontólogo general titular',
+    phases:[
+      'Aterrizar condiciones concretas con David y Elizabeth',
+      'Construir base de pacientes propios',
+      'Reducir gradualmente horas de asistente',
+      'Documentar resultados (casos, retención)',
+      'Formalizar el cambio de puesto y sueldo'
+    ]},
+  { id:'marketing', area:'consultorio', title:'Marketing y captación de pacientes — consultorio',
+    phases:[
+      'Activar reactivación de pacientes inactivos (llamar / mensajear)',
+      'Perfiles de bajo esfuerzo: Google Maps y WhatsApp Business',
+      'Redes sociales con ritmo sostenible',
+      'Retomar la página web del consultorio',
+      'Tarjeta NFC de reseñas en recepción'
+    ]},
+  { id:'nfc', area:'negocio', title:'Negocio secundario — tarjetas NFC',
+    phases:[
+      'Validar oferta y precio',
+      'Convertir el proceso en plantilla repetible',
+      'Armar pitch y canal de venta',
+      'Cerrar las primeras ventas',
+      'Reinvertir y escalar'
+    ]}
+];
+
+const AREA_LABEL = { consultorio:'Consultorio', negocio:'Negocio', desarrollo:'Desarrollo', casa:'Casa' };
+const AREA_COLOR_VAR = { consultorio:'--consultorio', negocio:'--negocio', desarrollo:'--desarrollo', casa:'--casa' };
+
+const HABITS = [
+  { id:'enfoque', label:'Enfoque y evitar distracciones', area:'crecimiento' },
+  { id:'lectura', label:'Leer', area:'crecimiento' },
+  { id:'ejercicio', label:'Ejercicio', area:'crecimiento' },
+  { id:'alimentacion', label:'Buena alimentación', area:'crecimiento' },
+  { id:'novia', label:'Tiempo de calidad con mi novia', area:'crecimiento' },
+  { id:'amigos', label:'Contacto con amigos', area:'relaciones' },
+  { id:'casa', label:'Casa limpia', area:'casa' },
+  { id:'ahorro', label:'Ahorrar', area:'negocio' }
+];
+
+const STORAGE_KEY = 'rd-tracker-state-v1';
+let state = null;
+
+function defaultState(){
+  const projects = {}; PROJECTS.forEach(p => projects[p.id] = p.phases.map(()=>false));
+  const habits = {}; HABITS.forEach(h => habits[h.id] = { streak:0, last:null, prevLast:null });
+  return { projects, tasks:{ gato:false, camioneta:false }, habits };
+}
+
+async function loadState(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    state = raw ? JSON.parse(raw) : defaultState();
+  }catch(e){
+    state = defaultState();
+  }
+}
+async function saveState(){
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){}
+}
+
+async function activarNotificaciones(){
+  try{
+    await OneSignal.Notifications.requestPermission();
+    const btn = document.getElementById('notif-btn');
+    if(OneSignal.Notifications.permission){ btn.textContent = 'Notificaciones activadas ✓'; btn.classList.add('done'); }
+  }catch(e){
+    alert('No se pudo activar. Revisa que hayas aceptado el permiso del navegador.');
+  }
+}
+
+function todayStr(){ return new Date().toISOString().slice(0,10); }
+function fmtDate(){
+  const d = new Date();
+  return d.toLocaleDateString('es-MX', { weekday:'long', day:'numeric', month:'long' });
+}
+
+let currentFilter = 'todas';
+
+function renderGauge(){
+  let done=0, total=0;
+  PROJECTS.forEach(p=>{ total+=p.phases.length; done+=state.projects[p.id].filter(Boolean).length; });
+  const pct = total ? Math.round(done/total*100) : 0;
+  document.getElementById('gauge-num').textContent = pct+'%';
+  document.getElementById('gauge-fill').style.width = pct+'%';
+}
+
+function renderChips(){
+  const areas = ['todas','consultorio','negocio','desarrollo','casa'];
+  const labels = { todas:'Todas', consultorio:'Consultorio', negocio:'Negocio', desarrollo:'Desarrollo', casa:'Casa' };
+  const el = document.getElementById('chips');
+  el.innerHTML = areas.map(a=>`<div class="chip ${a===currentFilter?'active':''}" data-area="${a}">${labels[a]}</div>`).join('');
+  el.querySelectorAll('.chip').forEach(c=>c.addEventListener('click', ()=>{ currentFilter=c.dataset.area; renderChips(); renderProjects(); }));
+}
+
+function projectCard(p){
+  const arr = state.projects[p.id];
+  const done = arr.filter(Boolean).length, total = arr.length;
+  const pct = Math.round(done/total*100);
+  const phasesHtml = p.phases.map((ph,i)=>`
+    <div class="phase">
+      <input type="checkbox" id="${p.id}-${i}" ${arr[i]?'checked':''} onchange="togglePhase('${p.id}',${i},this.checked)">
+      <label for="${p.id}-${i}" class="${arr[i]?'done':''}">${ph}</label>
+    </div>`).join('');
+  return `
+  <div class="card">
+    <div class="card-top">
+      <span class="badge b-${p.area}">${AREA_LABEL[p.area]}</span>
+    </div>
+    <h3>${p.title}</h3>
+    <div class="progress-row">
+      <div class="progress-track"><div class="progress-fill" style="width:${pct}%; background:var(${AREA_COLOR_VAR[p.area]})"></div></div>
+      <span class="progress-text">${done}/${total}</span>
+    </div>
+    <details><summary>Ver fases</summary>${phasesHtml}</details>
+  </div>`;
+}
+
+function specialCards(){
+  let html = '';
+  if(currentFilter==='todas' || currentFilter==='consultorio'){
+    html += `
+    <div class="card dormant">
+      <span class="badge b-consultorio">Consultorio</span>
+      <h3>Especialidad dental</h3>
+      <div class="note">En espera · 6 a 8 meses por delante. Cuando se acerque el momento: valorar requisitos de acceso y universidades en México.</div>
+    </div>`;
+  }
+  if(currentFilter==='todas' || currentFilter==='desarrollo'){
+    html += `
+    <div class="card">
+      <span class="badge b-desarrollo">Desarrollo</span>
+      <h3>Mejorar en programación</h3>
+      <div class="note">Habilidad continua — se nutre directo de la plantilla NFC y de retomar la página web del consultorio.</div>
+    </div>`;
+  }
+  if(currentFilter==='todas' || currentFilter==='casa'){
+    html += `
+    <div class="card">
+      <span class="badge b-casa">Casa</span>
+      <h3>Vacunar y castrar al gato</h3>
+      <div class="lock">🔒 Depende de: primer ingreso del negocio NFC</div>
+      <div class="task-row"><input type="checkbox" id="t-gato" ${state.tasks.gato?'checked':''} onchange="toggleTask('gato',this.checked)"><label for="t-gato">Resuelto</label></div>
+    </div>
+    <div class="card">
+      <span class="badge b-casa">Casa</span>
+      <h3>Arreglar la camioneta</h3>
+      <div class="lock">🔒 Depende de: ahorro después del gato</div>
+      <div class="task-row"><input type="checkbox" id="t-camioneta" ${state.tasks.camioneta?'checked':''} onchange="toggleTask('camioneta',this.checked)"><label for="t-camioneta">Resuelto</label></div>
+    </div>`;
+  }
+  return html;
+}
+
+function renderProjects(){
+  const list = currentFilter==='todas' ? PROJECTS : PROJECTS.filter(p=>p.area===currentFilter);
+  const el = document.getElementById('projects-list');
+  el.innerHTML = list.map(projectCard).join('') + specialCards();
+}
+
+function togglePhase(id, idx, checked){
+  state.projects[id][idx] = checked;
+  saveState(); renderGauge(); renderProjects();
+}
+function toggleTask(id, checked){
+  state.tasks[id] = checked;
+  saveState(); renderProjects();
+}
+
+function renderHabits(){
+  const today = todayStr();
+  const el = document.getElementById('habits-grid');
+  el.innerHTML = HABITS.map(h=>{
+    const s = state.habits[h.id];
+    const isDone = s.last === today;
+    return `
+    <div class="habit-card">
+      <span class="badge b-${h.area}">${AREA_LABEL[h.area] || (h.area==='crecimiento'?'Crecimiento':'Relaciones')}</span>
+      <div class="habit-title">${h.label}</div>
+      <div class="streak-row"><span class="streak-num">${s.streak}</span><span class="streak-label">días seguidos</span></div>
+      <div class="habit-btn ${isDone?'done':''}" onclick="toggleHabit('${h.id}')">${isDone?'Hecho hoy ✓':'Marcar hoy'}</div>
+    </div>`;
+  }).join('');
+}
+
+function toggleHabit(id){
+  const h = state.habits[id];
+  const today = todayStr();
+  if(h.last === today){
+    h.last = h.prevLast || null;
+    h.streak = Math.max(0, h.streak-1);
+    h.prevLast = null;
+  }else{
+    const y = new Date(); y.setDate(y.getDate()-1);
+    const yesterday = y.toISOString().slice(0,10);
+    h.prevLast = h.last;
+    h.streak = (h.last === yesterday) ? h.streak+1 : 1;
+    h.last = today;
+  }
+  saveState(); renderHabits();
+}
+
+document.querySelectorAll('.tab').forEach(t=>{
+  t.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    document.getElementById('view-'+t.dataset.view).classList.add('active');
+  });
+});
+
+(async function init(){
+  document.getElementById('today-label').textContent = 'Bitácora · ' + fmtDate();
+  await loadState();
+  renderGauge(); renderChips(); renderProjects(); renderHabits();
+})();
+</script>
+</body>
+</html>
