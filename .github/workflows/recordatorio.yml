@@ -21,7 +21,7 @@ jobs:
             -w "\nHTTP_STATUS:%{http_code}\n" \
             -d '{
               "app_id": "80f42d8e-8fe1-4037-9686-a0a3f9fd74f3",
-              "included_segments": ["Subscribed Users"],
+              "include_subscription_ids": ["29fd1034-1cbb-4cba-b57a-c9ca67f7c2b5", "c8422dc3-6a1a-44b8-b2c3-939c8ebf3de1"],
               "headings": {"en": "Bitácora"},
               "contents": {"en": "Dale un vistazo a tus pendientes de hoy"},
               "url": "https://ricdrip-ai.github.io/bitacora/"
