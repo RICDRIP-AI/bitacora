@@ -15,9 +15,10 @@ jobs:
     steps:
       - name: Enviar notificación push
         run: |
-          curl -s -X POST https://onesignal.com/api/v1/notifications \
+          curl -X POST https://onesignal.com/api/v1/notifications \
             -H "Authorization: Basic ${{ secrets.ONESIGNAL_REST_API_KEY }}" \
             -H "Content-Type: application/json" \
+            -w "\nHTTP_STATUS:%{http_code}\n" \
             -d '{
               "app_id": "80f42d8e-8fe1-4037-9686-a0a3f9fd74f3",
               "included_segments": ["Subscribed Users"],
