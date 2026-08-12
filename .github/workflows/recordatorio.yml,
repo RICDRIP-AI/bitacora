@@ -1,0 +1,27 @@
+name: Recordatorio bitácora
+
+on:
+  schedule:
+    # Horarios en UTC. Chihuahua está en UTC-6 en horario de verano (marzo-noviembre)
+    # y UTC-7 en horario de invierno — ajusta 1 hora cuando cambie la temporada.
+    - cron: '0 14 * * *'   # 8:00 AM Chihuahua
+    - cron: '0 19 * * *'   # 1:00 PM Chihuahua
+    - cron: '0 2 * * *'    # 8:00 PM Chihuahua
+  workflow_dispatch:        # te permite dispararlo manualmente desde GitHub para probar
+
+jobs:
+  enviar-recordatorio:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Enviar notificación push
+        run: |
+          curl -s -X POST https://onesignal.com/api/v1/notifications \
+            -H "Authorization: Basic ${{ secrets.ONESIGNAL_REST_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "app_id": "80f42d8e-8fe1-4037-9686-a0a3f9fd74f3",
+              "included_segments": ["Subscribed Users"],
+              "headings": {"en": "Bitácora"},
+              "contents": {"en": "Dale un vistazo a tus pendientes de hoy"},
+              "url": "https://ricdrip-ai.github.io/bitacora/"
+            }'
